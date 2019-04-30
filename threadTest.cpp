@@ -12,15 +12,20 @@ class Foo
 
         void thread1();
         void thread2();
+
+        void   setArr(int idx, char value);
+        char * getArr();
     private:
         int val;
         std::chrono::_V2::system_clock::time_point start;
+        char * arr;
 };
 
 Foo::Foo(int n)
 {
     val = n;
     std::chrono::_V2::system_clock::time_point start = std::chrono::system_clock::now();
+    arr = new char[10];
 }
 
 void Foo::bar()
@@ -33,9 +38,19 @@ int Foo::foobar(int n)
     return val + n;
 }
 
+void Foo::setArr(int idx, char value)
+{
+    arr[idx] = value;
+}
+
+char * Foo::getArr()
+{
+    return arr;
+}
+
 void Foo::thread2()
 {
-    usleep(1000*200); //
+    usleep(1000*1000); //
     std::chrono::_V2::system_clock::time_point end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
@@ -68,6 +83,10 @@ extern "C"
     int Foo_foobar(Foo* foo, int n) {return foo->foobar(n);}
     void Foo_thread1(Foo* foo) {foo->thread1();}
     void Foo_thread2(Foo* foo) {foo->thread2();}
+
+    void Foo_setArr(Foo* foo, int idx, char value) {foo->setArr(idx, value);}
+    void Foo_getArr(Foo* foo)                      {foo->getArr();}
+
 }
 
 /* From http://www.auctoris.co.uk/2017/04/29/calling-c-classes-from-python-with-ctypes/
